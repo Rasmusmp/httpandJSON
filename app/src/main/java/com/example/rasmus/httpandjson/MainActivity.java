@@ -18,6 +18,7 @@ import android.widget.Toast;
 http://developer.android.com/guide/components/bound-services.html#Lifecycle
  */
 
+//new change
 
 public class MainActivity extends ListActivity {
 

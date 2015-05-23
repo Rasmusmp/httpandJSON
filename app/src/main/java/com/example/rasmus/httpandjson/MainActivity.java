@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -73,11 +75,15 @@ public class MainActivity extends ListActivity {
     }
 
     public void onButtonClick(View v){
-        if(isBound){
-            spinner.setVisibility(View.VISIBLE);
+        if(isBound && isNetworkConnected()){
+            if (eventAdapter==null) {
+                spinner.setVisibility(View.VISIBLE);
+            }
             iTogService.fetchJSON();
-        }else{  Toast.makeText(this, "Please 'Bind' service", Toast.LENGTH_SHORT).show();
-
+        }else if (!isBound){
+            Toast.makeText(this, "Please 'Bind' service", Toast.LENGTH_SHORT).show();
+        }else if (!isNetworkConnected()){
+            Toast.makeText(this, "Please connect your phone to the internet", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -159,7 +165,7 @@ public class MainActivity extends ListActivity {
 
     private void updateEventListView(){
         if (iTogService != null && eventAdapter == null){
-            EventAdapter eventAdapter = new EventAdapter(this,
+             eventAdapter = new EventAdapter(this,
                     R.layout.listview_item_row,
                     iTogService.getCurrentEventList());
 
@@ -174,6 +180,14 @@ public class MainActivity extends ListActivity {
 
         }
 
+    }
+
+    public boolean isNetworkConnected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo == null){
+            return false;
+        } else { return true; }
     }
 
     @Override

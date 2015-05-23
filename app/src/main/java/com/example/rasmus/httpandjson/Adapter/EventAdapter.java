@@ -2,10 +2,13 @@ package com.example.rasmus.httpandjson.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rasmus.httpandjson.R;
@@ -42,6 +45,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new EventHolder();
+            holder.listImg = (ImageView) row.findViewById(R.id.listImageView);
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
             holder.txtTime = (TextView) row.findViewById(R.id.txtTime);
 
@@ -53,6 +57,9 @@ public class EventAdapter extends ArrayAdapter<Event> {
         Event event = data.get(position);
         holder.txtTitle.setText(event.getName());
 
+        int resId = context.getResources().getIdentifier(event.getType(),"drawable", context.getPackageName());
+        holder.listImg.setImageResource(resId);
+
         if (!event.getTime().isEmpty()) {
             holder.txtTime.setText("    kl. " + event.getTime());
         } else {
@@ -63,6 +70,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
     }
 
     static class EventHolder {
+        ImageView listImg;
         TextView txtTitle;
         TextView txtTime;
     }

@@ -91,6 +91,8 @@ public class MainActivity extends ListActivity {
         }
     }
 
+    //hej
+
 
     /*
     ServiceConnection monitors the connection with the service.

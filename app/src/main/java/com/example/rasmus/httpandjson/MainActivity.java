@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.example.rasmus.httpandjson.util.iTogService;
+
 /*
 http://developer.android.com/guide/components/bound-services.html#Lifecycle
  */
@@ -24,7 +26,7 @@ public class MainActivity extends ListActivity {
 
     String msg = "Rasmus Logging: ";
 
-    iTogService iTogService;
+    com.example.rasmus.httpandjson.util.iTogService iTogService;
     iTogBroadcastReceiver iTogBroadcastReceiver;
     ArrayAdapter<String> adapter = null;
     private String[] listItems = null;

@@ -19,7 +19,7 @@
         </activity>
 
         <service
-            android:name=".iTogService"
+            android:name=".util.iTogService"
             android:enabled="true"
             android:exported="true" >
         </service>

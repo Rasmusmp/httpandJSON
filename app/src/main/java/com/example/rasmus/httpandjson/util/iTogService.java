@@ -1,29 +1,25 @@
-package com.example.rasmus.httpandjson;
+package com.example.rasmus.httpandjson.util;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
+
+import com.example.rasmus.httpandjson.model.Event;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,15 +31,17 @@ public class iTogService extends Service {
     String msg = "Rasmus Logging: ";
     //String JSONData;
     //JSONObject reader;
-    //String JSONstring = "http://stog.itog.dk/itog/action/list/format/json";
+    String JSONstring = "http://nhaulrik.dk/food_festival.json";
     public static final String RESULT_RETURNED_FROM_SERVICE = "Result_Returned_From_Service";
     public static final String ERROR_CALL_SERVICE = "Error_Call_Service";
 
     private ArrayList<String> listItems = new ArrayList<String>();
+    private ArrayList<Event> events = new ArrayList<Event>();
+    Event temp;
 
 
     // Binder given to clients
-    private final IBinder myBinder = new LocalBinder();
+    public final IBinder myBinder = new LocalBinder();
 
     private final Random RandomGenerator = new Random();
 
@@ -52,7 +50,7 @@ public class iTogService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        iTogService getService(){
+        public iTogService getService(){
             return iTogService.this;
         }
     }
@@ -79,11 +77,11 @@ public class iTogService extends Service {
         thread.start();
     }
 
-    private void getStationList(){
+    public void getStationList(){
         URI myURI = null;
 
         try {
-            myURI = new URI("http://stog.itog.dk/itog/action/list/format/json");
+            myURI = new URI(JSONstring);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -113,9 +111,26 @@ public class iTogService extends Service {
 
             listItems.clear();
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                listItems.add(jsonObject.getString("name"));
+                JSONObject JS = jsonArray.getJSONObject(i);
+
+                Event event = new Event(JS.getString("name"),
+                                        JS.getInt("id"),
+                                        JS.getString("date"),
+                                        JS.getString("time"),
+                                        JS.getString("description"),
+                                        JS.getString("lat"),
+                                        JS.getString("long"),
+                                        JS.getString("type"));
+
+                events.add(event);
+
+
+
+
+                //listItems.add(JS.getString("name"));
             }
+
+            Log.d(msg, "Event list: " + events.get(1));
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -18,7 +18,7 @@ import android.widget.Toast;
 http://developer.android.com/guide/components/bound-services.html#Lifecycle
  */
 
-//niko
+//fuck af
 
 public class MainActivity extends ListActivity {
 

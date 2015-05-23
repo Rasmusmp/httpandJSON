@@ -61,7 +61,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         holder.listImg.setImageResource(resId);
 
         if (!event.getTime().isEmpty()) {
-            holder.txtTime.setText("    kl. " + event.getTime());
+            holder.txtTime.setText("kl. " + event.getTime());
         } else {
             holder.txtTime.setText("All day");
         }

@@ -111,7 +111,7 @@ public class iTogService extends Service {
 
             JSONArray jsonArray = new JSONArray(SB.toString());
 
-            events.clear();
+            //events.clear();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject JS = jsonArray.getJSONObject(i);
 

@@ -14,7 +14,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get iTog List"
+        android:text="Get Event List"
         android:id="@+id/button"
         android:onClick="onButtonClick"
         android:layout_below="@+id/textView"
@@ -63,5 +63,13 @@
         android:layout_toLeftOf="@+id/button2"
         android:layout_toStartOf="@+id/button2"
         android:onClick="clearList"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

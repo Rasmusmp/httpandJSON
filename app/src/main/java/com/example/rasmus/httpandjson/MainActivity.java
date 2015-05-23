@@ -12,8 +12,11 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.rasmus.httpandjson.Adapter.EventAdapter;
+import com.example.rasmus.httpandjson.model.Event;
 import com.example.rasmus.httpandjson.util.iTogService;
 
 /*
@@ -29,9 +32,13 @@ public class MainActivity extends ListActivity {
     com.example.rasmus.httpandjson.util.iTogService iTogService;
     iTogBroadcastReceiver iTogBroadcastReceiver;
     ArrayAdapter<String> adapter = null;
+    ArrayAdapter<Event> eventAdapter = null;
     private String[] listItems = null;
     // boolean to check if a service is bound.
     boolean isBound = false;
+
+    private ProgressBar spinner;
+
 
     String JSONstring = "http://stog.itog.dk/itog/action/list/format/json";
 
@@ -39,6 +46,9 @@ public class MainActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        spinner = (ProgressBar) findViewById(R.id.progressBar);
+        spinner.setVisibility(View.GONE);
     }
 
 
@@ -64,6 +74,7 @@ public class MainActivity extends ListActivity {
 
     public void onButtonClick(View v){
         if(isBound){
+            spinner.setVisibility(View.VISIBLE);
             iTogService.fetchJSON();
         }else{  Toast.makeText(this, "Please 'Bind' service", Toast.LENGTH_SHORT).show();
 
@@ -89,8 +100,9 @@ public class MainActivity extends ListActivity {
     }
 
     public void clearList(View v){
-        if (adapter != null){
-            setListAdapter(null);
+        if (eventAdapter != null){
+            eventAdapter = null;
+            setListAdapter(eventAdapter);
         }
     }
 
@@ -126,7 +138,9 @@ public class MainActivity extends ListActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().compareTo(iTogService.RESULT_RETURNED_FROM_SERVICE) == 0){
-                updateItogListView();
+                //updateItogListView();
+                spinner.setVisibility(View.GONE);
+                updateEventListView();
             } else {
                 Toast.makeText(context, "Host not available", Toast.LENGTH_SHORT).show();
             }
@@ -141,6 +155,25 @@ public class MainActivity extends ListActivity {
             setListAdapter(adapter);
 
         }
+    }
+
+    private void updateEventListView(){
+        if (iTogService != null && eventAdapter == null){
+            EventAdapter eventAdapter = new EventAdapter(this,
+                    R.layout.listview_item_row,
+                    iTogService.getCurrentEventList());
+
+            setListAdapter(eventAdapter);
+
+            /*
+            eventAdapter = new ArrayAdapter<Event>(this,
+                    android.R.layout.simple_list_item_1,
+                    iTogService.getCurrentEventList());
+            setListAdapter(eventAdapter);
+            */
+
+        }
+
     }
 
     @Override

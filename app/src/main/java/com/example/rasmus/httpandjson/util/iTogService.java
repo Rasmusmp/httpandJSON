@@ -21,9 +21,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class iTogService extends Service {
@@ -31,7 +33,7 @@ public class iTogService extends Service {
     String msg = "Rasmus Logging: ";
     //String JSONData;
     //JSONObject reader;
-    String JSONstring = "http://nhaulrik.dk/food_festival.json";
+    String JSONstring = "https://dl.dropboxusercontent.com/u/42653489/food_festival.json";
     public static final String RESULT_RETURNED_FROM_SERVICE = "Result_Returned_From_Service";
     public static final String ERROR_CALL_SERVICE = "Error_Call_Service";
 
@@ -109,7 +111,7 @@ public class iTogService extends Service {
 
             JSONArray jsonArray = new JSONArray(SB.toString());
 
-            listItems.clear();
+            events.clear();
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject JS = jsonArray.getJSONObject(i);
 
@@ -123,14 +125,18 @@ public class iTogService extends Service {
                                         JS.getString("type"));
 
                 events.add(event);
+               // Log.d(msg, "Event object: " + JS.getString("name"));
 
 
 
 
                 //listItems.add(JS.getString("name"));
+                Log.d(msg, "Event list: " + events.get(i).getName());
+                Log.d(msg, "Is null?: " + events.get(i).getTime().isEmpty());
+
             }
 
-            Log.d(msg, "Event list: " + events.get(1));
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -138,13 +144,19 @@ public class iTogService extends Service {
             e.printStackTrace();
         }
 
+
+
         Intent listDone = new Intent(RESULT_RETURNED_FROM_SERVICE);
         sendBroadcast(listDone);
 
     }
 
+    public ArrayList<Event> getCurrentEventList(){
+        return events;
+    }
     public ArrayList<String> getCurrentStationList(){
         return listItems;
+
     }
 
 }

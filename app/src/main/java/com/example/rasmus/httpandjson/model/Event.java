@@ -1,6 +1,9 @@
 package com.example.rasmus.httpandjson.model;
 
 import java.util.Date;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Rasmus on 23-05-2015.
@@ -53,4 +56,15 @@ public class Event {
     public String getType(){return type;}
     public void setType(String type){this.type = type;}
 
+    @Override
+    public String toString() {
+
+        String stringTime = null;
+
+        if (!this.time.isEmpty()){
+            stringTime = "kl. " + this.time;
+        }else { stringTime ="All day"; }
+
+        return "" + this.name + " " + stringTime;
+    }
 }

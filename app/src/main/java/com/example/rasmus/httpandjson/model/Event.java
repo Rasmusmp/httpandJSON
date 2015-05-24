@@ -18,8 +18,9 @@ public class Event {
     private String latitude;
     private String longitude;
     private String type;
+    private boolean reminder;
 
-    public Event(String name, int id, String date, String time, String description, String latitude, String longitude, String type) {
+    public Event(String name, int id, String date, String time, String description, String latitude, String longitude, String type, boolean reminder) {
 
         this.name = name;
         this.id = id;
@@ -29,6 +30,7 @@ public class Event {
         this.latitude = latitude;
         this.longitude = longitude;
         this.type = type;
+        this.reminder = reminder;
 
     }
 
@@ -55,6 +57,9 @@ public class Event {
 
     public String getType(){return type;}
     public void setType(String type){this.type = type;}
+
+    public boolean getReminder(){return reminder;}
+    public void setReminder(boolean reminder){this.reminder = reminder;}
 
     @Override
     public String toString() {

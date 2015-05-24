@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +35,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         //return super.getView(position, convertView, parent);
 
         View row = convertView;
@@ -49,6 +50,21 @@ public class EventAdapter extends ArrayAdapter<Event> {
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
             holder.txtTime = (TextView) row.findViewById(R.id.txtTime);
             holder.txtPlace = (TextView) row.findViewById(R.id.txtPlace);
+            holder.reminderBtn = (ImageButton) row.findViewById(R.id.reminderBtn);
+
+            final EventHolder finalHolder = holder;
+            holder.reminderBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!data.get(position).getReminder()) {
+                        data.get(position).setReminder(true);
+                        finalHolder.reminderBtn.setImageResource(R.drawable.reminder_true);
+                    } else {
+                        data.get(position).setReminder(false);
+                        finalHolder.reminderBtn.setImageResource(R.drawable.reminder_false);
+                    }
+                }
+            });
 
             row.setTag(holder);
         } else{
@@ -86,6 +102,8 @@ public class EventAdapter extends ArrayAdapter<Event> {
                 break;
         }
 
+
+
         return row;
     }
 
@@ -94,5 +112,6 @@ public class EventAdapter extends ArrayAdapter<Event> {
         TextView txtTitle;
         TextView txtTime;
         TextView txtPlace;
+        ImageButton reminderBtn;
     }
 }

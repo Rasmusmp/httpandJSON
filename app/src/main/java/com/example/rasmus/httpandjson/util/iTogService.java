@@ -122,7 +122,8 @@ public class iTogService extends Service {
                                         JS.getString("description"),
                                         JS.getString("lat"),
                                         JS.getString("long"),
-                                        JS.getString("type"));
+                                        JS.getString("type"),
+                                        false);
 
                 events.add(event);
                // Log.d(msg, "Event object: " + JS.getString("name"));

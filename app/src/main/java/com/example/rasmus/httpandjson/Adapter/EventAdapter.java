@@ -52,6 +52,12 @@ public class EventAdapter extends ArrayAdapter<Event> {
             holder.txtPlace = (TextView) row.findViewById(R.id.txtPlace);
             holder.reminderBtn = (ImageButton) row.findViewById(R.id.reminderBtn);
 
+
+            /*
+            * Make buttonListener for reminder btn in listView.
+            * If clicked and reminder is not set(false), set reminder to true or else keep false
+            * and update/set picture/view accordingly.
+            */
             final EventHolder finalHolder = holder;
             holder.reminderBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -101,8 +107,6 @@ public class EventAdapter extends ArrayAdapter<Event> {
                 holder.txtPlace.setText("Nordiske Dråber");
                 break;
         }
-
-
 
         return row;
     }

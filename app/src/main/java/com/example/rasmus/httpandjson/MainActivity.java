@@ -25,7 +25,6 @@ import com.example.rasmus.httpandjson.util.iTogService;
 http://developer.android.com/guide/components/bound-services.html#Lifecycle
  */
 
-//fuck af
 
 public class MainActivity extends ListActivity {
 
@@ -111,8 +110,6 @@ public class MainActivity extends ListActivity {
             setListAdapter(eventAdapter);
         }
     }
-
-    //hej
 
 
     /*

@@ -48,22 +48,42 @@ public class EventAdapter extends ArrayAdapter<Event> {
             holder.listImg = (ImageView) row.findViewById(R.id.listImageView);
             holder.txtTitle = (TextView)row.findViewById(R.id.txtTitle);
             holder.txtTime = (TextView) row.findViewById(R.id.txtTime);
+            holder.txtPlace = (TextView) row.findViewById(R.id.txtPlace);
 
             row.setTag(holder);
         } else{
             holder = (EventHolder) row.getTag();
         }
 
+        // Get data from event array at a given position
         Event event = data.get(position);
+
+        // Set the name of the event in the title field
         holder.txtTitle.setText(event.getName());
 
+        // Find the id of the image matching the type of event
         int resId = context.getResources().getIdentifier(event.getType(),"drawable", context.getPackageName());
+        // Set the image with the id found in the line above
         holder.listImg.setImageResource(resId);
 
+        // Check to see if time variable is empty. This means the event lasts all day.
         if (!event.getTime().isEmpty()) {
             holder.txtTime.setText("kl. " + event.getTime());
         } else {
             holder.txtTime.setText("All day");
+        }
+
+        // Set the place of the event in the place field
+        switch (event.getType()){
+            case "ballademad":
+                holder.txtPlace.setText("Ballademad");
+                break;
+            case "gastroscenen":
+                holder.txtPlace.setText("Gastroscenen");
+                break;
+            case "nordiskedraber":
+                holder.txtPlace.setText("Nordiske Dråber");
+                break;
         }
 
         return row;
@@ -73,5 +93,6 @@ public class EventAdapter extends ArrayAdapter<Event> {
         ImageView listImg;
         TextView txtTitle;
         TextView txtTime;
+        TextView txtPlace;
     }
 }

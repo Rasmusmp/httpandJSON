@@ -75,12 +75,15 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
 
         manager.beginTransaction().hide(programFragment).commit();
 
+        restoreEvents();
+        /*
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
         //Gson gson = new Gson();
         String json = appSharedPrefs.getString("events","");
         storedEvents = gson.fromJson(json, Event[].class);
         //Log.d(msg, "Old events: " + gson.toJson(storedEvents));
+        */
 
 
     }
@@ -89,6 +92,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     protected void onStart() {
         super.onStart();
         Log.d(msg, "onStart()");
+        restoreEvents();
 
         // Bind to localService
         Intent intent = new Intent(this, ProgramService.class);
@@ -101,6 +105,9 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         super.onStop();
         Log.d(msg, "onStop()");
 
+        storeEvents();
+
+        /*
         // Store the list of objects on the phone
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
@@ -110,6 +117,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         prefsEditor.putString("events", json);
         prefsEditor.commit();
         Log.d(msg, "Events stored");
+        */
 
         // unbind from the service
         if(isBound) {
@@ -155,6 +163,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
             Toast.makeText(this, "Service is unBound", Toast.LENGTH_SHORT).show();
         }
 */
+        /*
         // http://androidcodemonkey.blogspot.dk/2011/07/store-and-get-object-in-android-shared.html
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
@@ -164,6 +173,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         prefsEditor.putString("events", json);
         prefsEditor.commit();
         Log.d(msg, "Events stored");
+        */
     }
 
     public void BindService(View v){
@@ -174,6 +184,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
             Toast.makeText(this, "Service is Bound", Toast.LENGTH_SHORT).show();
         }
 */
+        restoreEvents();
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
         Gson gson = new Gson();
@@ -304,6 +315,31 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         filter.addAction(ProgramService.ERROR_CALL_SERVICE);
         ProgramBroadcastReceiver = new ProgramBroadcastReceiver();
         registerReceiver(ProgramBroadcastReceiver, filter);
+
+    }
+
+    public void storeEvents(){
+// Store the list of objects on the phone
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(events);
+        prefsEditor.putString("events", json);
+        prefsEditor.apply();
+        //prefsEditor.commit();
+        Log.d(msg, "Events stored");
+    }
+
+    public void restoreEvents(){
+
+        // http://androidcodemonkey.blogspot.dk/2011/07/store-and-get-object-in-android-shared.html
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        //Gson gson = new Gson();
+        String json = appSharedPrefs.getString("events","");
+        storedEvents = gson.fromJson(json, Event[].class);
+        //Log.d(msg, "Old events: " + gson.toJson(storedEvents));
 
     }
 

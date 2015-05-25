@@ -57,6 +57,7 @@ public class ProgramFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(msg, "Position: " + position);
+
                 communicator.respond(position);
             }
         });

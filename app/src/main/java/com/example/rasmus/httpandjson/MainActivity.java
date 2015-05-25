@@ -243,9 +243,11 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
 
     //@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    public void respond(int position) {
+    public void respond(Bundle bundle) {
+
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("position", position);
+        intent.putExtras(bundle);
+
 
         if (Build.VERSION.SDK_INT >= 16) {
             Bundle slideAnimation = ActivityOptions.makeCustomAnimation(getApplicationContext(),
@@ -254,6 +256,8 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
 
             startActivity(intent, slideAnimation);
         } else { startActivity(intent); }
+
+
     }
 
 

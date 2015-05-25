@@ -18,11 +18,26 @@ public class DetailActivity extends Activity {
         setContentView(R.layout.detail_activity);
 
         Intent intent = getIntent();
-        int position = intent.getIntExtra("position",0);
+
+        Bundle b = intent.getExtras();
+
+        String name = b.getString("name");
+        String latitude = b.getString("latitude");
+        String longitude = b.getString("longitude");
+        String description = b.getString("description");
+        String date = b.getString("date");
+        String id = b.getString("id");
+        String time = b.getString("time");
+        String type = b.getString("type");
 
         detailTitle = (TextView) findViewById(R.id.detaiTitle);
 
-        detailTitle.append(" " + position);
+        detailTitle.append("\n Event:                  " + name);
+        detailTitle.append("\n Koordinater:          " + latitude+" : "+longitude);
+        detailTitle.append("\n Beskrivelse:      " + description);
+        detailTitle.append("\n Dato og tid:          " + date + " : " + time);
+        detailTitle.append("\n id:                         " + id);
+        detailTitle.append("\n Eventtype:            " + type);
 
     }
 

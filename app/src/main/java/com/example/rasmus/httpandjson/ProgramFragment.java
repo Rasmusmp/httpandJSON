@@ -23,6 +23,7 @@ public class ProgramFragment extends Fragment {
     ProgramService ProgramService;
 
 
+
     Communicator communicator;
     ListView programList;
 
@@ -50,15 +51,31 @@ public class ProgramFragment extends Fragment {
     }
 
     public void changeData(ArrayList<Event> events){
-        EventAdapter eventAdapter = new EventAdapter(getActivity(), R.layout.listview_item_row, events);
+        final EventAdapter eventAdapter = new EventAdapter(getActivity(), R.layout.listview_item_row, events);
         programList.setAdapter(eventAdapter);
 
         programList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 Log.d(msg, "Position: " + position);
 
-                communicator.respond(position);
+              Event e = eventAdapter.getItem(position);
+
+             Log.d(msg, "Latitude: "+ e.getLatitude());
+
+             Bundle b = new Bundle();
+
+             b.putString("latitude",e.getLatitude());
+             b.putString("longitude",e.getLatitude());
+             b.putString("description",e.getDescription());
+             b.putString("date",e.getDate());
+             b.putString("name",e.getName());
+             b.putString("id",""+e.getId());
+             b.putString("time",e.getTime());
+             b.putString("type",e.getType());
+
+            communicator.respond(b);
             }
         });
     }
@@ -68,7 +85,7 @@ public class ProgramFragment extends Fragment {
 
 
     public interface Communicator {
-        public void respond(int position);
+        public void respond(Bundle bundle);
     }
 
 }

@@ -22,7 +22,8 @@
         android:layout_height="fill_parent"
         android:orientation="vertical"
         android:gravity="center_vertical"
-        android:layout_weight="0.6">
+        android:layout_weight="0.6"
+        android:clickable="false">
 
         <TextView android:id="@+id/txtTitle"
             android:layout_width="wrap_content"

@@ -3,9 +3,9 @@ package com.example.rasmus.httpandjson;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Slide;
+import android.view.Window;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 
 public class DetailActivity extends Activity {

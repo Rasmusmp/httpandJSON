@@ -74,6 +74,7 @@ public class ProgramFragment extends Fragment {
              b.putString("id",""+e.getId());
              b.putString("time",e.getTime());
              b.putString("type",e.getType());
+             b.putString("reminder", ""+e.getReminder());
 
             communicator.respond(b);
             }

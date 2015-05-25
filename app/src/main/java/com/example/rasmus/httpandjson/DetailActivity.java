@@ -15,11 +15,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Text;
+
 
 public class DetailActivity extends Activity {
 
-    TextView detailTitle;
-
+    TextView titleTextView;
+    TextView descriptionTextView;
 
     static final LatLng HAMBURG = new LatLng(53.558, 9.927);
     static final LatLng KIEL = new LatLng(53.551, 9.993);
@@ -44,15 +46,23 @@ public class DetailActivity extends Activity {
         String id = b.getString("id");
         String time = b.getString("time");
         String type = b.getString("type");
+        String reminder = b.getString("reminder");
 
-        detailTitle = (TextView) findViewById(R.id.detaiTitle);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
+        titleTextView.setText(name);
 
+        descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
+        descriptionTextView.setText(description);
+
+
+        /**
         detailTitle.append("\n Event:                  " + name);
         detailTitle.append("\n Koordinater:          " + latitude+" : "+longitude);
         detailTitle.append("\n Beskrivelse:      " + description);
         detailTitle.append("\n Dato og tid:          " + date + " : " + time);
         detailTitle.append("\n id:                         " + id);
         detailTitle.append("\n Eventtype:            " + type);
+**/
 
         LatLng eventLatLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
 
@@ -67,10 +77,10 @@ public class DetailActivity extends Activity {
 
 
         // Move the camera instantly to hamburg with a zoom of 15.
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 30));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 15));
 
         // Zoom in, animating the camera.
-        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+        map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
 
 
     }

@@ -97,7 +97,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     }
 
     public void getProgram(){
-        if(isBound && isNetworkConnected()){
+        if(isBound && isNetworkConnected() && eventAdapter==null){
             if (eventAdapter==null) {
                 spinner.setVisibility(View.VISIBLE);
             }

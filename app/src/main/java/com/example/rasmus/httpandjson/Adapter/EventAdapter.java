@@ -100,6 +100,11 @@ public class EventAdapter extends ArrayAdapter<Event> {
             holder = (EventHolder) row.getTag();
         }
 
+        // set the state of the reminder button
+        if (data.get(position).getReminder() == true){
+            holder.reminderBtn.setImageResource(R.drawable.reminder_true);
+        } else {holder.reminderBtn.setImageResource(R.drawable.reminder_false);}
+
         // Get data from event array at a given position
         Event event = data.get(position);
 

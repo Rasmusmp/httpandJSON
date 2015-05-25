@@ -37,6 +37,8 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+        <service android:name=".util.ScheduleService" />
+        <service android:name=".util.NotifyService" />
 
         <activity
             android:name=".DetailActivity"

@@ -12,11 +12,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rasmus.httpandjson.R;
 import com.example.rasmus.httpandjson.model.Event;
+import com.example.rasmus.httpandjson.util.ScheduleClient;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.StringTokenizer;
 
 /**
  * Created by Rasmus on 23-05-2015.
@@ -28,6 +32,8 @@ public class EventAdapter extends ArrayAdapter<Event> {
     Context context;
     int layoutResourceId;
     ArrayList<Event> data = null;
+
+    private ScheduleClient scheduleClient;
 
     public EventAdapter(Context context, int layoutResourceId, ArrayList<Event> data) {
         super(context, layoutResourceId, data);
@@ -62,6 +68,11 @@ public class EventAdapter extends ArrayAdapter<Event> {
         View row = convertView;
         EventHolder holder = null;
 
+
+        // Create a new service client and 'hopefully' bind our adapter to this service
+        scheduleClient = new ScheduleClient(getContext());
+        scheduleClient.doBindService();
+
         if (row == null){
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
@@ -73,6 +84,10 @@ public class EventAdapter extends ArrayAdapter<Event> {
             holder.txtPlace = (TextView) row.findViewById(R.id.txtPlace);
             holder.reminderBtn = (ImageButton) row.findViewById(R.id.reminderBtn);
 
+            // If the event is all festival, hide the reminder button
+            if (data.get(position).getDate().isEmpty()|| data.get(position).getTime().isEmpty()){
+                holder.reminderBtn.setVisibility(View.INVISIBLE);
+            }
 
 
             /*
@@ -85,10 +100,40 @@ public class EventAdapter extends ArrayAdapter<Event> {
             holder.reminderBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    // Get the date from our event
+                    String date = data.get(position).getDate();
+                    // Use StringTokenizer to split string into day, month, and year
+                    StringTokenizer dateTokens = new StringTokenizer(date, "/");
+                    String day = dateTokens.nextToken();
+                    String month = dateTokens.nextToken();
+                    String year = "20" + dateTokens.nextToken();
+
+                    // Get the time of our event
+                    String time = data.get(position).getTime();
+                    // Use StringTokenizer to split string into hours and minutes
+                    StringTokenizer timeTokens = new StringTokenizer(time, ":");
+                    String hours = timeTokens.nextToken();
+                    String minutes = timeTokens.nextToken();
+
                     if (!data.get(position).getReminder()) {
                         data.get(position).setReminder(true);
                         finalHolder.reminderBtn.setImageResource(R.drawable.reminder_true);
-                    } else {
+
+                        // Create a new calendar
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Integer.parseInt(year),
+                                // In java.util.Calendar, the month value is 0-based, so we subtract 1 from the month to get the right format
+                                (Integer.parseInt(month)-1),
+                                Integer.parseInt(day),
+                                Integer.parseInt(hours),
+                                Integer.parseInt(minutes),
+                                0);
+                        scheduleClient.setAlarmForNotification(calendar);
+                        Log.d(msg, "Alarm " + data.get(position)+ " is set");
+                        Toast.makeText(context, "Notification set for: "+ day +"/"+ (month) +"/"+ year + " " + hours + ":" + minutes, Toast.LENGTH_SHORT).show();
+
+                        } else {
                         data.get(position).setReminder(false);
                         finalHolder.reminderBtn.setImageResource(R.drawable.reminder_false);
                     }
@@ -103,7 +148,9 @@ public class EventAdapter extends ArrayAdapter<Event> {
         // set the state of the reminder button
         if (data.get(position).getReminder() == true){
             holder.reminderBtn.setImageResource(R.drawable.reminder_true);
-        } else {holder.reminderBtn.setImageResource(R.drawable.reminder_false);}
+        } else if (data.get(position).getReminder() == false){
+            holder.reminderBtn.setImageResource(R.drawable.reminder_false);
+        }
 
         // Get data from event array at a given position
         Event event = data.get(position);
@@ -120,7 +167,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         if (!event.getTime().isEmpty()) {
             holder.txtTime.setText("kl. " + event.getTime());
         } else {
-            holder.txtTime.setText("All day");
+            holder.txtTime.setText("Hele festivalen");
         }
 
         // Set the place of the event in the place field
@@ -138,6 +185,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
 
         return row;
     }
+
 
     static class EventHolder {
         ImageView listImg;

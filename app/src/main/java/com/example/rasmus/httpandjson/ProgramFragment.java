@@ -67,7 +67,7 @@ public class ProgramFragment extends Fragment {
              Bundle b = new Bundle();
 
              b.putString("latitude",e.getLatitude());
-             b.putString("longitude",e.getLatitude());
+             b.putString("longitude",e.getLongitude());
              b.putString("description",e.getDescription());
              b.putString("date",e.getDate());
              b.putString("name",e.getName());

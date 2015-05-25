@@ -26,6 +26,7 @@ public class DetailActivity extends Activity {
     private GoogleMap map;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,22 +54,20 @@ public class DetailActivity extends Activity {
         detailTitle.append("\n id:                         " + id);
         detailTitle.append("\n Eventtype:            " + type);
 
+        LatLng eventLatLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+
 
         //GOOGLE MAPS
 
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
-        Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
-                .title("Hamburg"));
-        Marker kiel = map.addMarker(new MarkerOptions()
-                .position(KIEL)
-                .title("Kiel")
-                .snippet("Kiel is cool")
-               );
+        Marker event = map.addMarker(new MarkerOptions().position(eventLatLng)
+                .title(name).snippet(description));
+
 
         // Move the camera instantly to hamburg with a zoom of 15.
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 30));
 
         // Zoom in, animating the camera.
         map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);

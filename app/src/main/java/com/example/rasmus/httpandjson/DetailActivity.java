@@ -21,6 +21,8 @@ import org.w3c.dom.Text;
 public class DetailActivity extends Activity {
 
     TextView titleTextView;
+    TextView timeTextView;
+
     TextView descriptionTextView;
 
     static final LatLng HAMBURG = new LatLng(53.558, 9.927);
@@ -51,9 +53,11 @@ public class DetailActivity extends Activity {
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         titleTextView.setText(name);
 
+        timeTextView = (TextView) findViewById(R.id.timeTextView);
+        timeTextView.setText("Kl: " + time);
+
         descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
         descriptionTextView.setText(description);
-
 
         /**
         detailTitle.append("\n Event:                  " + name);

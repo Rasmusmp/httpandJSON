@@ -37,9 +37,7 @@ public class iTogService extends Service {
     public static final String RESULT_RETURNED_FROM_SERVICE = "Result_Returned_From_Service";
     public static final String ERROR_CALL_SERVICE = "Error_Call_Service";
 
-    private ArrayList<String> listItems = new ArrayList<String>();
     private ArrayList<Event> events = new ArrayList<Event>();
-    Event temp;
 
 
     // Binder given to clients
@@ -126,15 +124,9 @@ public class iTogService extends Service {
                                         false);
 
                 events.add(event);
-               // Log.d(msg, "Event object: " + JS.getString("name"));
 
-
-
-
-                //listItems.add(JS.getString("name"));
-                Log.d(msg, "Event list: " + events.get(i).getName());
-                Log.d(msg, "Is null?: " + events.get(i).getTime().isEmpty());
-
+                //Log.d(msg, "Event list: " + events.get(i).getName());
+                //Log.d(msg, "Is null?: " + events.get(i).getTime().isEmpty());
             }
 
 
@@ -154,10 +146,6 @@ public class iTogService extends Service {
 
     public ArrayList<Event> getCurrentEventList(){
         return events;
-    }
-    public ArrayList<String> getCurrentStationList(){
-        return listItems;
-
     }
 
 }

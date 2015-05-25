@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
  * http://www.ezzylearning.com/tutorial/customizing-android-listview-items-with-custom-arrayadapter
  */
 public class EventAdapter extends ArrayAdapter<Event> {
+    String msg = "Rasmus Logging: ";
 
     Context context;
     int layoutResourceId;
@@ -32,6 +34,25 @@ public class EventAdapter extends ArrayAdapter<Event> {
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+    }
+
+    @Override
+    public int getCount() {
+        if(data!=null){
+            return data.size();
+        } else { return 0; }
+    }
+
+    @Override
+    public Event getItem(int position) {
+        if(data!=null){
+            return data.get(position);
+        } else {return null; }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -53,10 +74,12 @@ public class EventAdapter extends ArrayAdapter<Event> {
             holder.reminderBtn = (ImageButton) row.findViewById(R.id.reminderBtn);
 
 
+
             /*
             * Make buttonListener for reminder btn in listView.
             * If clicked and reminder is not set(false), set reminder to true or else keep false
             * and update/set picture/view accordingly.
+            * Maybe use setOnCheckChangedListener instead.
             */
             final EventHolder finalHolder = holder;
             holder.reminderBtn.setOnClickListener(new View.OnClickListener() {

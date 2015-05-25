@@ -1,5 +1,7 @@
 package com.example.rasmus.httpandjson;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -14,19 +16,22 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.rasmus.httpandjson.Adapter.EventAdapter;
 import com.example.rasmus.httpandjson.model.Event;
 import com.example.rasmus.httpandjson.util.iTogService;
+
+import java.util.ArrayList;
 
 /*
 http://developer.android.com/guide/components/bound-services.html#Lifecycle
  */
 
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends Activity implements ProgramFragment.Communicator{
 
     String msg = "Rasmus Logging: ";
 
@@ -34,14 +39,15 @@ public class MainActivity extends ListActivity {
     iTogBroadcastReceiver iTogBroadcastReceiver;
     ArrayAdapter<String> adapter = null;
     ArrayAdapter<Event> eventAdapter = null;
-    private String[] listItems = null;
+    private ArrayList<Event> events = new ArrayList<Event>();
     // boolean to check if a service is bound.
     boolean isBound = false;
 
+    FragmentManager manager;
+    ProgramFragment programFragment;
+
     private ProgressBar spinner;
-
-
-    String JSONstring = "http://stog.itog.dk/itog/action/list/format/json";
+    private ImageView imageLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +55,23 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.activity_main);
 
         spinner = (ProgressBar) findViewById(R.id.progressBar);
-        spinner.setVisibility(View.GONE);
+        imageLogo = (ImageView) findViewById(R.id.imageLogo);
+
+        spinner.setVisibility(View.INVISIBLE);
+
+        manager = getFragmentManager();
+
+        programFragment = (ProgramFragment) manager.findFragmentById(R.id.programFragment);
+        programFragment.setCommunicator(this);
+
+        manager.beginTransaction().hide(programFragment).commit();
     }
 
+    public void updateView(){
+        imageLogo.setVisibility(View.GONE);
+        manager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).show(programFragment).commit();
+
+    }
 
     @Override
     protected void onStart() {
@@ -70,6 +90,19 @@ public class MainActivity extends ListActivity {
         if(isBound) {
             unbindService(myConnection);
             isBound = false;
+        }
+    }
+
+    public void getProgram(){
+        if(isBound && isNetworkConnected()){
+            if (eventAdapter==null) {
+                spinner.setVisibility(View.VISIBLE);
+            }
+            iTogService.fetchJSON();
+        }else if (!isBound){
+            Toast.makeText(this, "Please 'Bind' service", Toast.LENGTH_SHORT).show();
+        }else if (!isNetworkConnected()){
+            Toast.makeText(this, "Please connect your phone to the internet", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -107,7 +140,7 @@ public class MainActivity extends ListActivity {
     public void clearList(View v){
         if (eventAdapter != null){
             eventAdapter = null;
-            setListAdapter(eventAdapter);
+            //setListAdapter(eventAdapter);
         }
     }
 
@@ -127,6 +160,7 @@ public class MainActivity extends ListActivity {
             iTogService.LocalBinder binder = (iTogService.LocalBinder) service;
             iTogService = binder.getService();
             isBound = true;
+            getProgram();
         }
 
         @Override
@@ -135,48 +169,37 @@ public class MainActivity extends ListActivity {
         }
     };
 
+    @Override
+    public void respond(int position) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("position", position);
+        startActivity(intent);
+    }
+
 
     private class iTogBroadcastReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().compareTo(iTogService.RESULT_RETURNED_FROM_SERVICE) == 0){
-                //updateItogListView();
                 spinner.setVisibility(View.GONE);
                 updateEventListView();
+                updateView();
             } else {
                 Toast.makeText(context, "Host not available", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void updateItogListView(){
-        if (iTogService != null){
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1,
-                    iTogService.getCurrentStationList());
-            setListAdapter(adapter);
-
-        }
-    }
 
     private void updateEventListView(){
+
+        ProgramFragment programFragment = (ProgramFragment) getFragmentManager().findFragmentById(R.id.programFragment);
         if (iTogService != null && eventAdapter == null){
-             eventAdapter = new EventAdapter(this,
-                    R.layout.listview_item_row,
-                    iTogService.getCurrentEventList());
 
-            setListAdapter(eventAdapter);
-
-            /*
-            eventAdapter = new ArrayAdapter<Event>(this,
-                    android.R.layout.simple_list_item_1,
-                    iTogService.getCurrentEventList());
-            setListAdapter(eventAdapter);
-            */
-
+            events = iTogService.getCurrentEventList();
+            programFragment.changeData(events);
         }
-
     }
 
     public boolean isNetworkConnected(){

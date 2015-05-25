@@ -9,11 +9,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +25,9 @@ import android.widget.Toast;
 
 import com.example.rasmus.httpandjson.model.Event;
 import com.example.rasmus.httpandjson.util.ProgramService;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -33,15 +38,17 @@ http://developer.android.com/guide/components/bound-services.html#Lifecycle
 
 public class MainActivity extends Activity implements ProgramFragment.Communicator{
 
-    String msg = "Rasmus Logging: ";
+    String msg = "Rasmus Logging";
 
     ProgramService ProgramService;
-    iTogBroadcastReceiver iTogBroadcastReceiver;
+    ProgramBroadcastReceiver ProgramBroadcastReceiver;
     ArrayAdapter<String> adapter = null;
     ArrayAdapter<Event> eventAdapter = null;
     private ArrayList<Event> events = new ArrayList<Event>();
+    Event[] storedEvents = null;
     // boolean to check if a service is bound.
     boolean isBound = false;
+    Gson gson = new Gson();
 
     FragmentManager manager;
     ProgramFragment programFragment;
@@ -53,11 +60,13 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(msg, "onCreate()");
 
         spinner = (ProgressBar) findViewById(R.id.progressBar);
         imageLogo = (ImageView) findViewById(R.id.imageLogo);
 
         spinner.setVisibility(View.INVISIBLE);
+
 
         manager = getFragmentManager();
 
@@ -65,26 +74,42 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         programFragment.setCommunicator(this);
 
         manager.beginTransaction().hide(programFragment).commit();
-    }
 
-    public void updateView(){
-        imageLogo.setVisibility(View.GONE);
-        manager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).show(programFragment).commit();
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        //Gson gson = new Gson();
+        String json = appSharedPrefs.getString("events","");
+        storedEvents = gson.fromJson(json, Event[].class);
+        //Log.d(msg, "Old events: " + gson.toJson(storedEvents));
+
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(msg, "onStart()");
 
         // Bind to localService
         Intent intent = new Intent(this, ProgramService.class);
         bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(msg, "onStop()");
+
+        // Store the list of objects on the phone
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(events);
+        prefsEditor.putString("events", json);
+        prefsEditor.commit();
+        Log.d(msg, "Events stored");
 
         // unbind from the service
         if(isBound) {
@@ -94,10 +119,13 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     }
 
     public void getProgram(){
-        if(isBound && isNetworkConnected() && eventAdapter==null){
+        if(isBound && isNetworkConnected() && events.isEmpty()){
             if (eventAdapter==null) {
                 spinner.setVisibility(View.VISIBLE);
+                imageLogo.setVisibility(View.VISIBLE);
             }
+            Log.d(msg, "Main - Internet");
+            manager.beginTransaction().hide(programFragment).commit();
             ProgramService.fetchJSON();
         }else if (!isBound){
             Toast.makeText(this, "Please 'Bind' service", Toast.LENGTH_SHORT).show();
@@ -120,26 +148,45 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     }
 
     public void unBindService(View v){
-        // unbind from the service
+/*        // unbind from the service
         if(isBound) {
             unbindService(myConnection);
             isBound = false;
             Toast.makeText(this, "Service is unBound", Toast.LENGTH_SHORT).show();
         }
+*/
+        // http://androidcodemonkey.blogspot.dk/2011/07/store-and-get-object-in-android-shared.html
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(events);
+        prefsEditor.putString("events", json);
+        prefsEditor.commit();
+        Log.d(msg, "Events stored");
     }
 
     public void BindService(View v){
-        if(!isBound){
+/*        if(!isBound){
             // Bind to localService
             Intent intent = new Intent(this, ProgramService.class);
             bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
             Toast.makeText(this, "Service is Bound", Toast.LENGTH_SHORT).show();
         }
+*/
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        Gson gson = new Gson();
+        String json = appSharedPrefs.getString("events","");
+        Event[] oldEvents = gson.fromJson(json, Event[].class);
+        //Log.d(msg, "Old events: " + gson.toJson(oldEvents));
     }
 
     public void clearList(View v){
-        if (eventAdapter != null){
-            eventAdapter = null;
+        storedEvents = null;
+        if (!events.isEmpty()){
+            events.clear();
+            programFragment.changeData(events);
             //setListAdapter(eventAdapter);
         }
     }
@@ -160,8 +207,20 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
             ProgramService.LocalBinder binder = (ProgramService.LocalBinder) service;
             ProgramService = binder.getService();
             isBound = true;
-            if (eventAdapter==null) {
+
+            if (storedEvents!=null && storedEvents.length > 0) {
+                spinner.setVisibility(View.GONE);
+                try {
+                    Log.d(msg, "Local");
+                    updateEventListView();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                updateView();
+
+            } else {
                 getProgram();
+                //updateView();
             }
         }
 
@@ -187,13 +246,17 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     }
 
 
-    private class iTogBroadcastReceiver extends BroadcastReceiver{
+    private class ProgramBroadcastReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().compareTo(ProgramService.RESULT_RETURNED_FROM_SERVICE) == 0){
                 spinner.setVisibility(View.GONE);
-                updateEventListView();
+                try {
+                    updateEventListView();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 updateView();
             } else {
                 Toast.makeText(context, "Host not available", Toast.LENGTH_SHORT).show();
@@ -201,14 +264,25 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         }
     }
 
+    public void updateView(){
+        imageLogo.setVisibility(View.GONE);
+        manager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).show(programFragment).commit();
 
-    private void updateEventListView(){
+    }
+
+    private void updateEventListView() throws JSONException {
 
         ProgramFragment programFragment = (ProgramFragment) getFragmentManager().findFragmentById(R.id.programFragment);
         if (ProgramService != null && eventAdapter == null){
 
+            if (storedEvents!=null && storedEvents.length > 0) {
+                //Log.d(msg, "storedEvents: " + gson.toJson(storedEvents));
+                ProgramService.createEventArray(gson.toJson(storedEvents));
+            }
+
             events = ProgramService.getCurrentEventList();
-            programFragment.changeData(events);
+            //Log.d(msg, "Main - events:" + events);
+            programFragment.changeData(events); //make sure we keep old program
         }
     }
 
@@ -228,13 +302,14 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         IntentFilter filter;
         filter = new IntentFilter(ProgramService.RESULT_RETURNED_FROM_SERVICE);
         filter.addAction(ProgramService.ERROR_CALL_SERVICE);
-        iTogBroadcastReceiver = new iTogBroadcastReceiver();
-        registerReceiver(iTogBroadcastReceiver, filter);
+        ProgramBroadcastReceiver = new ProgramBroadcastReceiver();
+        registerReceiver(ProgramBroadcastReceiver, filter);
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(msg, "onDestroy()");
     }
 }

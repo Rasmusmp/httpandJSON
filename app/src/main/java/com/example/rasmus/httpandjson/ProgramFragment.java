@@ -17,7 +17,7 @@ import com.example.rasmus.httpandjson.util.ProgramService;
 import java.util.ArrayList;
 
 public class ProgramFragment extends Fragment {
-    String msg = "Rasmus Logging: ";
+    String msg = "Rasmus Logging";
 
     ArrayAdapter<Event> eventAdapter = null;
     ProgramService ProgramService;
@@ -50,7 +50,7 @@ public class ProgramFragment extends Fragment {
     }
 
     public void changeData(ArrayList<Event> events){
-        EventAdapter eventAdapter = new EventAdapter(getActivity(), R.layout.listview_item_row,events);
+        EventAdapter eventAdapter = new EventAdapter(getActivity(), R.layout.listview_item_row, events);
         programList.setAdapter(eventAdapter);
 
         programList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -60,10 +60,6 @@ public class ProgramFragment extends Fragment {
                 communicator.respond(position);
             }
         });
-
-
-
-
     }
 
     public void setCommunicator(Communicator communicator) { this.communicator = communicator; }

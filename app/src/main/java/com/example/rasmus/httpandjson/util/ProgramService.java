@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.example.rasmus.httpandjson.model.Event;
 
@@ -67,14 +68,18 @@ public class ProgramService extends Service {
             @Override
             public void run() {
 
+                try {
                     getStationList();
-                    //Log.d(msg, "Station list: " + listItems);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //Log.d(msg, "Station list: " + listItems);
             }
         });
         thread.start();
     }
 
-    public void getStationList(){
+    public void getStationList() throws JSONException {
         URI myURI = null;
 
         try {
@@ -104,6 +109,8 @@ public class ProgramService extends Service {
                 SB.append(data);
             }
 
+            createEventArray(SB.toString());
+            /*
             JSONArray jsonArray = new JSONArray(SB.toString());
 
             //events.clear();
@@ -122,15 +129,15 @@ public class ProgramService extends Service {
 
                 events.add(event);
 
-                //Log.d(msg, "Event list: " + events.get(i).getName());
+
+                //Log.d(msg, "Event list: " + events.get(i).getDescription());
                 //Log.d(msg, "Is null?: " + events.get(i).getTime().isEmpty());
             }
+            */
 
 
 
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -141,7 +148,36 @@ public class ProgramService extends Service {
 
     }
 
+    public void createEventArray(String string) throws JSONException {
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(string);
+            events.clear();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject JS = jsonArray.getJSONObject(i);
+
+                Event event = new Event(JS.getString("name"),
+                        JS.getInt("id"),
+                        JS.getString("date"),
+                        JS.getString("time"),
+                        JS.getString("description"),
+                        JS.getString("latitude"),
+                        JS.getString("longitude"),
+                        JS.getString("type"),
+                        JS.getBoolean("reminder"));
+
+                events.add(event);
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+
+
+    }
+
     public ArrayList<Event> getCurrentEventList(){
+        //Log.d(msg, "Service - events:" + events);
         return events;
     }
 

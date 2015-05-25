@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * http://www.ezzylearning.com/tutorial/customizing-android-listview-items-with-custom-arrayadapter
  */
 public class EventAdapter extends ArrayAdapter<Event> {
-    String msg = "Rasmus Logging: ";
+    String msg = "Rasmus Logging";
 
     Context context;
     int layoutResourceId;

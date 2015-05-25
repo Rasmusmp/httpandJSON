@@ -1,10 +1,8 @@
 package com.example.rasmus.httpandjson;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.FragmentManager;
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,11 +19,10 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rasmus.httpandjson.model.Event;
-import com.example.rasmus.httpandjson.util.iTogService;
+import com.example.rasmus.httpandjson.util.ProgramService;
 
 import java.util.ArrayList;
 
@@ -38,7 +35,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
 
     String msg = "Rasmus Logging: ";
 
-    com.example.rasmus.httpandjson.util.iTogService iTogService;
+    ProgramService ProgramService;
     iTogBroadcastReceiver iTogBroadcastReceiver;
     ArrayAdapter<String> adapter = null;
     ArrayAdapter<Event> eventAdapter = null;
@@ -81,7 +78,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         super.onStart();
 
         // Bind to localService
-        Intent intent = new Intent(this, iTogService.class);
+        Intent intent = new Intent(this, ProgramService.class);
         bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -101,7 +98,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
             if (eventAdapter==null) {
                 spinner.setVisibility(View.VISIBLE);
             }
-            iTogService.fetchJSON();
+            ProgramService.fetchJSON();
         }else if (!isBound){
             Toast.makeText(this, "Please 'Bind' service", Toast.LENGTH_SHORT).show();
         }else if (!isNetworkConnected()){
@@ -114,7 +111,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
             if (eventAdapter==null) {
                 spinner.setVisibility(View.VISIBLE);
             }
-            iTogService.fetchJSON();
+            getProgram();
         }else if (!isBound){
             Toast.makeText(this, "Please 'Bind' service", Toast.LENGTH_SHORT).show();
         }else if (!isNetworkConnected()){
@@ -134,7 +131,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     public void BindService(View v){
         if(!isBound){
             // Bind to localService
-            Intent intent = new Intent(this, iTogService.class);
+            Intent intent = new Intent(this, ProgramService.class);
             bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
             Toast.makeText(this, "Service is Bound", Toast.LENGTH_SHORT).show();
         }
@@ -160,10 +157,12 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         public void onServiceConnected(ComponentName name, IBinder service) {
 
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            iTogService.LocalBinder binder = (iTogService.LocalBinder) service;
-            iTogService = binder.getService();
+            ProgramService.LocalBinder binder = (ProgramService.LocalBinder) service;
+            ProgramService = binder.getService();
             isBound = true;
-            getProgram();
+            if (eventAdapter==null) {
+                getProgram();
+            }
         }
 
         @Override
@@ -192,7 +191,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().compareTo(iTogService.RESULT_RETURNED_FROM_SERVICE) == 0){
+            if (intent.getAction().compareTo(ProgramService.RESULT_RETURNED_FROM_SERVICE) == 0){
                 spinner.setVisibility(View.GONE);
                 updateEventListView();
                 updateView();
@@ -206,9 +205,9 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
     private void updateEventListView(){
 
         ProgramFragment programFragment = (ProgramFragment) getFragmentManager().findFragmentById(R.id.programFragment);
-        if (iTogService != null && eventAdapter == null){
+        if (ProgramService != null && eventAdapter == null){
 
-            events = iTogService.getCurrentEventList();
+            events = ProgramService.getCurrentEventList();
             programFragment.changeData(events);
         }
     }
@@ -227,8 +226,8 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         Log.d(msg, "onResume()");
 
         IntentFilter filter;
-        filter = new IntentFilter(iTogService.RESULT_RETURNED_FROM_SERVICE);
-        filter.addAction(iTogService.ERROR_CALL_SERVICE);
+        filter = new IntentFilter(ProgramService.RESULT_RETURNED_FROM_SERVICE);
+        filter.addAction(ProgramService.ERROR_CALL_SERVICE);
         iTogBroadcastReceiver = new iTogBroadcastReceiver();
         registerReceiver(iTogBroadcastReceiver, filter);
 

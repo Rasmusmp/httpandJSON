@@ -1,9 +1,5 @@
 package com.example.rasmus.httpandjson;
 
-import android.app.Activity;
-import android.app.ListFragment;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -13,11 +9,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.rasmus.httpandjson.Adapter.EventAdapter;
 import com.example.rasmus.httpandjson.model.Event;
-import com.example.rasmus.httpandjson.util.iTogService;
+import com.example.rasmus.httpandjson.util.ProgramService;
 
 import java.util.ArrayList;
 
@@ -25,7 +20,7 @@ public class ProgramFragment extends Fragment {
     String msg = "Rasmus Logging: ";
 
     ArrayAdapter<Event> eventAdapter = null;
-    com.example.rasmus.httpandjson.util.iTogService iTogService;
+    ProgramService ProgramService;
 
 
     Communicator communicator;

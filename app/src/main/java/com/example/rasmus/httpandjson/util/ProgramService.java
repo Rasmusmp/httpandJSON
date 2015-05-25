@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.example.rasmus.httpandjson.model.Event;
 
@@ -21,14 +20,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
-public class iTogService extends Service {
+public class ProgramService extends Service {
 
     String msg = "Rasmus Logging: ";
     //String JSONData;
@@ -45,13 +42,13 @@ public class iTogService extends Service {
 
     private final Random RandomGenerator = new Random();
 
-    public iTogService() {
+    public ProgramService() {
 
     }
 
     public class LocalBinder extends Binder {
-        public iTogService getService(){
-            return iTogService.this;
+        public ProgramService getService(){
+            return ProgramService.this;
         }
     }
 

@@ -31,7 +31,7 @@
             android:layout_alignParentLeft="true"
             android:padding="5dp"
             android:background="#ff646478"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="5dp" />
 
         <ImageView
 
@@ -50,9 +50,9 @@
             android:orientation="horizontal"
 
 
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_above="@+id/map"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
 
             android:weightSum="5"
             >
@@ -117,7 +117,7 @@
             android:layout_alignParentLeft="true"
             android:padding="5dp"
             android:background="#ff646478"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="5dp" />
 
     </LinearLayout>
 

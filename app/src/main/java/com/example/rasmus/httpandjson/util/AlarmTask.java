@@ -21,7 +21,7 @@ public class AlarmTask implements Runnable{
     private final String info;
     // The android system alarm manager
     private final AlarmManager am;
-
+    private static final long ONE_MIN_AS_MILLISEC = 60000;
     // Your context to retrieve the alarm manager from
     private final Context context;
 
@@ -38,13 +38,11 @@ public class AlarmTask implements Runnable{
         // We don't start an activity as we just want to pop up a notification into the system bar not a full activity
         Intent intent = new Intent(context, NotifyService.class);
         intent.putExtra(NotifyService.INTENT_NOTIFY, true);
-
-        Log.i(msg, "Name to put: " + info);
         intent.putExtra("Name", info);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
         // Sets an alarm - note this alarm will be lost if the phone is turned off and on again.
         // Quickly thinking, the way round this would be to have your app be notified of the phone starting up and re-starting your alarms.
-        am.set(AlarmManager.RTC_WAKEUP, date.getTimeInMillis(), pendingIntent);
+        am.set(AlarmManager.RTC_WAKEUP, (date.getTimeInMillis() - (ONE_MIN_AS_MILLISEC*15)), pendingIntent);
     }
 }

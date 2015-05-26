@@ -40,10 +40,6 @@ public class AlarmTask implements Runnable{
 
         // Sets an alarm - note this alarm will be lost if the phone is turned off and on again.
         // Quickly thinking, the way round this would be to have your app be notified of the phone starting up and re-starting your alarms.
-        Log.d(msg, "Show time Sys-millis: " + System.currentTimeMillis());
-        Log.d(msg, "Show time millis: " + date.getTimeInMillis());
-        Log.d(msg, "Show val-date: " + date);
-        Log.d(msg, "Show time: " + date.getTime());
         am.set(AlarmManager.RTC_WAKEUP, date.getTimeInMillis(), pendingIntent);
     }
 }

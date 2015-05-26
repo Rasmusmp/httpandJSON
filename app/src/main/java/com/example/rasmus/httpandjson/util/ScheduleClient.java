@@ -10,27 +10,47 @@ import java.util.Calendar;
 
 /**
  * Created by Rasmus on 25-05-2015.
- * http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
+ *
+ * This is our service client, it is the 'middle-man' between the
+ * service and any activity that wants to connect to the service
+ *
+ * @author paul.blundell: http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
+ *
  */
-public class ScheduleClient {
 
+public class ScheduleClient {
+    String msg = "Rasmus Logging";
+
+    // The hook into our service
     private ScheduleService mBoundService;
+    // The context to start the service in
     private Context mContext;
+    // A flag if we are connected to the service or not
     private boolean mIsBound;
 
     public ScheduleClient(Context context){
         mContext = context;
     }
 
+    /**
+     * Call this to connect your activity to your service
+     */
     public void doBindService(){
+        // Establish a connection with our service
         mContext.bindService(new Intent(mContext, ScheduleService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }
 
+    /**
+     * When you attempt to connect to the service, this connection will be called with the result.
+     * If we have successfully connected we instantiate our service object so that we can call methods on it.
+     */
     private ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
-            mBoundService = ((ScheduleService.ServiceBinder) service).getService();
+            // This is called when the connection with our service has been established,
+            // giving us the service object we can use to interact with our service.
+            mBoundService = ((ScheduleService.ServiceBinder)service).getService();
         }
 
         public void onServiceDisconnected(ComponentName className){
@@ -38,12 +58,21 @@ public class ScheduleClient {
         }
     };
 
+    /**
+     * Tell our service to set an alarm for the given date
+     * @param c a date to set the notification for
+     */
     public void setAlarmForNotification(Calendar c){
         mBoundService.setAlarm(c);
     }
 
+    /**
+     * When you have finished with the service call this method to stop it
+     * releasing your connection and resources
+     */
     public void doUnbindService(){
         if (mIsBound){
+            // Detach our existing connection.
             mContext.unbindService(mConnection);
             mIsBound = false;
         }

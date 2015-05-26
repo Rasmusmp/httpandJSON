@@ -1,5 +1,6 @@
 package com.example.rasmus.httpandjson;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -13,20 +14,24 @@ import android.widget.ListView;
 import com.example.rasmus.httpandjson.Adapter.EventAdapter;
 import com.example.rasmus.httpandjson.model.Event;
 import com.example.rasmus.httpandjson.util.ProgramService;
+import com.example.rasmus.httpandjson.util.ScheduleClient;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.StringTokenizer;
 
-public class ProgramFragment extends Fragment {
+public class ProgramFragment extends Fragment implements EventAdapter.Listener{
     String msg = "Rasmus Logging";
 
     ArrayAdapter<Event> eventAdapter = null;
     ProgramService ProgramService;
-
-
+    ArrayList<Event> eventList;
 
     Communicator communicator;
     ListView programList;
 
+    // This is a handle so that we can call methods on our notification service
+    private ScheduleClient scheduleClient;
 
     public ProgramFragment() {
         // Required empty public constructor
@@ -35,6 +40,10 @@ public class ProgramFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Create a new service client and bind our activity to this service
+        scheduleClient = new ScheduleClient(this.getActivity());
+        scheduleClient.doBindService();
 
     }
 
@@ -50,17 +59,24 @@ public class ProgramFragment extends Fragment {
         return view;
     }
 
-    public void changeData(ArrayList<Event> events){
-        final EventAdapter eventAdapter = new EventAdapter(getActivity(), R.layout.listview_item_row, events);
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    public void changeData(final ArrayList<Event> events){
+        final EventAdapter eventAdapter = new EventAdapter(getActivity(), R.layout.listview_item_row, events, this);
         programList.setAdapter(eventAdapter);
 
         programList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Log.d(msg, "Position: " + position);
+             Log.d(msg, "Position: " + position);
 
-              Event e = eventAdapter.getItem(position);
+             Event e = eventAdapter.getItem(position);
+             eventList = events;
 
              Log.d(msg, "Latitude: "+ e.getLatitude());
 
@@ -81,12 +97,64 @@ public class ProgramFragment extends Fragment {
         });
     }
 
-    public void setCommunicator(Communicator communicator) { this.communicator = communicator; }
 
+    @Override
+    public void onStateChange(boolean state, int position, ArrayList<Event> events) {
+
+        Log.d(msg, "StateChanged: " + events);
+        Log.d(msg, "StateChanged: " + state + ", " + position);
+        // Get the date from our event
+        String date = events.get(position).getDate();
+        // Use StringTokenizer to split string into day, month, and year
+        StringTokenizer dateTokens = new StringTokenizer(date, "/");
+        String day = dateTokens.nextToken();
+        String month = dateTokens.nextToken();
+        String year = "20" + dateTokens.nextToken();
+
+        // Get the time of our event
+        String time = events.get(position).getTime();
+        // Use StringTokenizer to split string into hours and minutes
+        StringTokenizer timeTokens = new StringTokenizer(time, ":");
+        String hours = timeTokens.nextToken();
+        String minutes = timeTokens.nextToken();
+
+        // Create calendar
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Integer.parseInt(year),
+                // In java.util.Calendar, the month value is 0-based, so we subtract 1 from the month to get the right format
+                (Integer.parseInt(month)-1),
+                Integer.parseInt(day),
+                Integer.parseInt(hours),
+                Integer.parseInt(minutes),
+                0);
+
+        if (state){
+            // Create notification
+            scheduleClient.setAlarmForNotification(calendar);
+            Log.d(msg, "StateChanged - if true: " + state + ", " + position);
+        }else{
+            // Cancel notification
+            Log.d(msg, "StateChanged - if false: " + state + ", " + position);
+        }
+
+    }
+
+
+    public void setCommunicator(Communicator communicator) { this.communicator = communicator; }
 
 
     public interface Communicator {
         public void respond(Bundle bundle);
     }
 
+    @Override
+    public void onStop() {
+        // When our activity is stopped ensure we also stop the connection to the service
+        // this stops us leaking our activity into the system *bad*
+        if (scheduleClient != null){
+            scheduleClient.doUnbindService();
+        }
+        super.onStop();
+
+    }
 }

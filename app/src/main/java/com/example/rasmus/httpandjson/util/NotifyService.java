@@ -14,9 +14,17 @@ import com.example.rasmus.httpandjson.R;
 
 /**
  * Created by Rasmus on 25-05-2015.
- * http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
+ *
+ * This service is started when an Alarm has been raised
+ *
+ * We pop a notification into the status bar for the user to click on
+ * When the user clicks the notification a new activity is opened
+ *
+ * @author paul.blundell: http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
+ *
  */
 public class NotifyService extends Service {
+    String msg = "Rasmus Logging";
 
     public class ServiceBinder extends Binder {
         NotifyService getService(){
@@ -24,27 +32,34 @@ public class NotifyService extends Service {
         }
     }
 
-    private static final int NOTIFICATION = 123;
+    // Unique id to identify the notification.
+    private static final int NOTIFICATION = 5;
 
+    // Name of an intent extra we can use to identify if this service was started to create a notification
     public static final String INTENT_NOTIFY = "com.example.rasmus.httpandjson.util.INTENT_NOTIFY";
 
+    // The system notification manager
     private NotificationManager mNM;
 
     @Override
     public void onCreate() {
-        Log.i("NotifyService", "onCreate()");
+        Log.i(msg, "NotifyService - onCreate()");
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(msg, "NotifyService - Received start id " + startId + ": " + intent);
 
+        // If this service was started by out AlarmTask intent then we want to show our notification
         if (intent.getBooleanExtra(INTENT_NOTIFY, false)){
             showNotification();
         }
+        // We don't care if this service is stopped as we have already delivered our notification
         return START_NOT_STICKY;
     }
 
+    // This is the object that receives interactions from clients
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -52,6 +67,9 @@ public class NotifyService extends Service {
 
     private final IBinder mBinder = new ServiceBinder();
 
+    /**
+     * Creates a notification and shows it in the OS drag-down status bar
+     */
     private void showNotification(){
         // This is the 'title' of the notification
         CharSequence title = "Alarm!!";

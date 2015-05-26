@@ -36,6 +36,8 @@ import java.util.ArrayList;
 http://developer.android.com/guide/components/bound-services.html#Lifecycle
  */
 
+// Test
+
 
 public class MainActivity extends Activity implements ProgramFragment.Communicator{
 

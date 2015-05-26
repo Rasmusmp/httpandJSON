@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Window;
@@ -64,24 +65,31 @@ public class DetailActivity extends Activity {
         titleTextView.setText(name.toUpperCase());
 
         descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
+        descriptionTextView.setMovementMethod(new ScrollingMovementMethod());
         descriptionTextView.setText(description);
+
 
         timeTextView = (TextView) findViewById(R.id.timeTextView);
         timeTextView.setText("Kl: " + time);
 
-        typeTextView = (TextView) findViewById(R.id.typeTextView);
-        typeTextView.setText(type);
+
 
         eventImg = (ImageView) findViewById(R.id.eventImage);
 
-        /**
-        detailTitle.append("\n Event:                  " + name);
-        detailTitle.append("\n Koordinater:          " + latitude+" : "+longitude);
-        detailTitle.append("\n Beskrivelse:      " + description);
-        detailTitle.append("\n Dato og tid:          " + date + " : " + time);
-        detailTitle.append("\n id:                         " + id);
-        detailTitle.append("\n Eventtype:            " + type);
-**/
+        typeTextView = (TextView) findViewById(R.id.typeTextView);
+        // Set the place of the event in the place field
+        switch (type){
+            case "ballademad":
+                typeTextView.setText("Ballademad");
+                break;
+            case "gastroscenen":
+                typeTextView.setText("Gastroscenen");
+                break;
+            case "nordiskedraber":
+                typeTextView.setText("Nordiske Dråber");
+                break;
+        }
+
 
 
         // Find the id of the image matching the type of event

@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -118,6 +120,19 @@ public class DetailActivity extends Activity {
 
         // Zoom in, animating the camera.
    //     map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+
+        map.setMyLocationEnabled(true);
+
+        //add overlay
+
+        LatLng tangkrogen = new LatLng(56.137980, 10.210448 );
+
+        BitmapDescriptor image = BitmapDescriptorFactory.fromResource(R.drawable.overlay);
+        GroundOverlayOptions groundOverlay = new GroundOverlayOptions()
+                .image(image)
+                .position(tangkrogen, 500f)
+                .transparency(0.0f);
+        map.addGroundOverlay(groundOverlay);
 
 
     }

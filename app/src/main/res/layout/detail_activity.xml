@@ -36,7 +36,7 @@
         <ImageView
 
             android:layout_width="fill_parent"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Description"
             android:id="@+id/eventImage"

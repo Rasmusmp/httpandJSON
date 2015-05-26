@@ -160,6 +160,9 @@ public class EventAdapter extends ArrayAdapter<Event> {
 
         // Find the id of the image matching the type of event
         int resId = context.getResources().getIdentifier(event.getType(),"drawable", context.getPackageName());
+
+
+
         // Set the image with the id found in the line above
         holder.listImg.setImageResource(resId);
 

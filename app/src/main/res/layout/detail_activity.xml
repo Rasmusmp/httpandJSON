@@ -10,82 +10,101 @@
 
 
 
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:id="@+id/linearLayout">
-
-        <RelativeLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/map">
 
 
 
-
-                <RelativeLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="#ff40454f">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Title"
-                        android:id="@+id/titleTextView"
-                       android:layout_gravity="top"
-                        android:textColor="#ffffffff"
-                        android:layout_alignParentLeft="true"
-                        android:padding="5dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Time"
-                        android:id="@+id/timeTextView"
-                        android:textColor="#ffffffff"
-                        android:layout_gravity="top"
-                        android:layout_marginLeft="30dp"
-                        android:padding="5dp"
-                        android:layout_alignParentRight="true" />
-                </RelativeLayout>
-
-
-
-        </RelativeLayout>
-</LinearLayout>
 
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linearLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-
-        android:layout_marginTop="10dp"
-        android:layout_above="@+id/map"
-        android:layout_marginBottom="10dp"
-        android:background="#ff40454f">
+        android:orientation="vertical"
+        android:layout_above="@+id/map">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Title"
+            android:id="@+id/titleTextView"
+            android:layout_gravity="top"
+            android:textColor="#ffffffff"
+            android:layout_alignParentLeft="true"
+            android:padding="5dp"
+            android:background="#ff646478" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+
+            android:layout_marginTop="10dp"
+            android:layout_above="@+id/map"
+            android:layout_marginBottom="10dp"
+
+            android:weightSum="5"
+            >
+
+
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Type"
+                android:id="@+id/typeTextView"
+                android:textColor="#ffffffff"
+                android:padding="5dp"
+                android:layout_weight="4"
+                android:background="#ff3e768f"
+                android:layout_marginRight="5dp" />
+
+
+               <LinearLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:background="#ff4a4b5e">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Kl 13:00"
+                        android:id="@+id/timeTextView"
+                        android:textColor="#ffffffff"
+                        android:padding="5dp"
+                        android:layout_weight="2" />
+
+                   <ImageView
+                       android:layout_width="0dp"
+                       android:layout_height="30dp"
+                       android:src="@drawable/time"
+                       android:layout_gravity="center_vertical"
+                       android:layout_weight="0.8"
+
+                       />
+
+
+
+               </LinearLayout>
+
+            </LinearLayout>
+
+        <ImageView
+
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Description"
-            android:id="@+id/descriptionTextView"
+            android:id="@+id/eventImage"
             android:textColor="#ffffffff"
             android:padding="5dp"
 
-            />
+            android:background="#ffffff" />
+
+
 
      </LinearLayout>
 
@@ -94,7 +113,7 @@
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         class="com.google.android.gms.maps.MapFragment"
         android:layout_alignParentBottom="true" />
 

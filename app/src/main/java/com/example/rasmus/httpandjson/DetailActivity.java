@@ -1,10 +1,15 @@
 package com.example.rasmus.httpandjson;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.media.Image;
 import android.os.Bundle;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,12 +27,15 @@ public class DetailActivity extends Activity {
 
     TextView titleTextView;
     TextView timeTextView;
+    TextView typeTextView;
 
     TextView descriptionTextView;
+    ImageView eventImg;
 
     static final LatLng HAMBURG = new LatLng(53.558, 9.927);
     static final LatLng KIEL = new LatLng(53.551, 9.993);
     private GoogleMap map;
+    Context context;
 
 
 
@@ -51,13 +59,20 @@ public class DetailActivity extends Activity {
         String reminder = b.getString("reminder");
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
-        titleTextView.setText(name);
+        //Typeface robotoBoldCondensedItalic = Typeface.createFromAsset(getAssets(), "fonts/Roboto-BoldCondensedItalic.ttf");
+        //titleTextView.setTypeface(robotoBoldCondensedItalic);
+        titleTextView.setText(name.toUpperCase());
+
+        descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
+        descriptionTextView.setText(description);
 
         timeTextView = (TextView) findViewById(R.id.timeTextView);
         timeTextView.setText("Kl: " + time);
 
-        descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
-        descriptionTextView.setText(description);
+        typeTextView = (TextView) findViewById(R.id.typeTextView);
+        typeTextView.setText(type);
+
+        eventImg = (ImageView) findViewById(R.id.eventImage);
 
         /**
         detailTitle.append("\n Event:                  " + name);
@@ -67,6 +82,15 @@ public class DetailActivity extends Activity {
         detailTitle.append("\n id:                         " + id);
         detailTitle.append("\n Eventtype:            " + type);
 **/
+
+
+        // Find the id of the image matching the type of event
+        int resId = DetailActivity.this.getResources().getIdentifier(type+"_banner", "drawable", DetailActivity.this.getPackageName());
+        // Set the image with the id found in the line above
+
+       // Log.d("Nikolaj: ", ""+ resId);
+
+        eventImg.setImageResource(resId);
 
         LatLng eventLatLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
 
@@ -81,10 +105,10 @@ public class DetailActivity extends Activity {
 
 
         // Move the camera instantly to hamburg with a zoom of 15.
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 15));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 16));
 
         // Zoom in, animating the camera.
-        map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+   //     map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
 
 
     }

@@ -88,7 +88,7 @@ public class DetailActivity extends Activity {
         int resId = DetailActivity.this.getResources().getIdentifier(type+"_banner", "drawable", DetailActivity.this.getPackageName());
         // Set the image with the id found in the line above
 
-        Log.d("Nikolaj: ", ""+ resId);
+       // Log.d("Nikolaj: ", ""+ resId);
 
         eventImg.setImageResource(resId);
 
@@ -105,10 +105,10 @@ public class DetailActivity extends Activity {
 
 
         // Move the camera instantly to hamburg with a zoom of 15.
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 15));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 16));
 
         // Zoom in, animating the camera.
-        map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+   //     map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
 
 
     }

@@ -28,7 +28,7 @@ import com.example.rasmus.httpandjson.R;
  *
  */
 public class NotifyService extends Service implements ProgramFragment.Communicator {
-    String msg = "Rasmus Logging";
+    String msg = "Frederik Logging";
 
     /**
      * Class for clients to access
@@ -41,7 +41,8 @@ public class NotifyService extends Service implements ProgramFragment.Communicat
 
        // Unique id to identify the notification.
     private static int NOTIFICATION = 0;
-
+    // the text on the notification
+    private static String name;
     // Name of an intent extra we can use to identify if this service was started to create a notification
     public static final String INTENT_NOTIFY = "com.example.rasmus.httpandjson.util.INTENT_NOTIFY";
 
@@ -56,13 +57,15 @@ public class NotifyService extends Service implements ProgramFragment.Communicat
     @Override
     public void onCreate() {
         Log.i(msg, "NotifyService - onCreate()");
+        name = "An event";
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(msg, "NotifyService - Received start id " + startId + ": " + intent);
-
+        Log.i(msg, "Intent info for NotifyService: " + intent.getStringExtra("Name"));
+        name = intent.getStringExtra("Name");
         // If this service was started by our AlarmTask intent then we want to show our notification
         if (intent.getBooleanExtra(INTENT_NOTIFY, false)){
             showNotification();
@@ -85,13 +88,13 @@ public class NotifyService extends Service implements ProgramFragment.Communicat
      */
     private void showNotification(){
         // This is the 'title' of the notification
-        CharSequence title = "Alarm!!";
+        CharSequence title = "Foodfestival Reminder";
 
         // This is the icon to use on the notification
         int icon = R.drawable.time;
 
         // This is the scrolling text of the notification
-        CharSequence text = "Your notification time is upon us.";
+        CharSequence text = "" + name + " starts in 15 min";
 
         // What time to show on the notification
         long time = System.currentTimeMillis();
@@ -109,15 +112,15 @@ public class NotifyService extends Service implements ProgramFragment.Communicat
 
         // Send the notification to the system.
         mNM.notify(NOTIFICATION, notification);
-        NOTIFICATION ++;
 
-        // Store det NOTIFICATION id for later reference
-        SharedPreferences notificationId = PreferenceManager
-                .getDefaultSharedPreferences(this.getApplicationContext());
-        SharedPreferences.Editor prefsEditor = notificationId.edit();
-        prefsEditor.putInt("notificationId",NOTIFICATION);
+        // Store det NOTIFICATION id for later reference the key will be the name of the event in question
+      //  SharedPreferences notificationId = PreferenceManager
+       //         .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences.Editor prefsEditor = getSharedPreferences("Events", MODE_PRIVATE).edit();
+        prefsEditor.putInt(name ,NOTIFICATION);
         prefsEditor.apply();
-
+        Log.i(msg, "NotifyService Applied Prefs: " + name + " and: " + NOTIFICATION);
+        NOTIFICATION ++;
         // Stop the service when we are finished
         stopSelf();
     }

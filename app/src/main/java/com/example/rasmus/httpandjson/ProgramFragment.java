@@ -2,8 +2,11 @@ package com.example.rasmus.httpandjson;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -138,13 +141,24 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
                 Integer.parseInt(minutes),
                 0);
 
+        // Get notification information from the event
+        String info = events.get(position).getName();
+
         if (state){
             // Create notification
-            scheduleClient.setAlarmForNotification(calendar);
+            scheduleClient.setAlarmForNotification(calendar, info);
             Log.d(msg, "StateChanged - if true: " + state + ", " + position);
         }else{
             // Cancel notification
-            notificationManager.cancel(5);
+
+
+            SharedPreferences prefsEditor = getActivity().getSharedPreferences("Events", getActivity().MODE_PRIVATE);
+            int toCancel = prefsEditor.getInt(info, -1);
+            Log.i(msg, "Prefs gotten: " + "from: " + info + ", which gives: " + toCancel);
+            if((toCancel != -1)) {
+                NotificationManager mNM = (NotificationManager) getActivity().getSystemService(getActivity().NOTIFICATION_SERVICE);
+                mNM.cancel(toCancel);
+            }
 
             Log.d(msg, "StateChanged - if false: " + state + ", " + position);
         }

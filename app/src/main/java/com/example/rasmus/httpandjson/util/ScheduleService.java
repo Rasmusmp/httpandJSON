@@ -45,7 +45,7 @@ public class ScheduleService extends Service{
     /**
      * Show an alarm for a certain date when the alarm is called it will pop up a notification
      */
-    public void setAlarm(Calendar c){
-        new AlarmTask(this,c).run();
+    public void setAlarm(Calendar c, String i){
+        new AlarmTask(this,c,i).run();
     }
 }

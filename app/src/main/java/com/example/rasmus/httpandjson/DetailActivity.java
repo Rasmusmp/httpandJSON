@@ -124,6 +124,7 @@ public class DetailActivity extends Activity {
         map.setMyLocationEnabled(true);
 
         //add overlay
+        //
 
         LatLng tangkrogen = new LatLng(56.137980, 10.210448 );
 

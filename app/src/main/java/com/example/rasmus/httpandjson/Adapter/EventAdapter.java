@@ -33,13 +33,21 @@ public class EventAdapter extends ArrayAdapter<Event> {
     int layoutResourceId;
     ArrayList<Event> data = null;
 
-    private ScheduleClient scheduleClient;
+    Listener listener;
 
-    public EventAdapter(Context context, int layoutResourceId, ArrayList<Event> data) {
+    /**
+     * http://thedeveloperworldisyours.com/android/how-to-make-a-listener-in-android/#sthash.iRHYRYll.dpuf
+     */
+    public interface Listener {
+        public void onStateChange(boolean state, int position, ArrayList<Event> events);
+    }
+
+    public EventAdapter(Context context, int layoutResourceId, ArrayList<Event> data, Listener listener) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+        this.listener = listener;
     }
 
     @Override
@@ -67,11 +75,6 @@ public class EventAdapter extends ArrayAdapter<Event> {
 
         View row = convertView;
         EventHolder holder = null;
-
-
-        // Create a new service client and 'hopefully' bind our adapter to this service
-        scheduleClient = new ScheduleClient(getContext());
-        scheduleClient.doBindService();
 
         if (row == null){
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -101,41 +104,15 @@ public class EventAdapter extends ArrayAdapter<Event> {
                 @Override
                 public void onClick(View v) {
 
-                    // Get the date from our event
-                    String date = data.get(position).getDate();
-                    // Use StringTokenizer to split string into day, month, and year
-                    StringTokenizer dateTokens = new StringTokenizer(date, "/");
-                    String day = dateTokens.nextToken();
-                    String month = dateTokens.nextToken();
-                    String year = "20" + dateTokens.nextToken();
-
-                    // Get the time of our event
-                    String time = data.get(position).getTime();
-                    // Use StringTokenizer to split string into hours and minutes
-                    StringTokenizer timeTokens = new StringTokenizer(time, ":");
-                    String hours = timeTokens.nextToken();
-                    String minutes = timeTokens.nextToken();
-
                     if (!data.get(position).getReminder()) {
                         data.get(position).setReminder(true);
                         finalHolder.reminderBtn.setImageResource(R.drawable.reminder_true);
-
-                        // Create a new calendar
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Integer.parseInt(year),
-                                // In java.util.Calendar, the month value is 0-based, so we subtract 1 from the month to get the right format
-                                (Integer.parseInt(month)-1),
-                                Integer.parseInt(day),
-                                Integer.parseInt(hours),
-                                Integer.parseInt(minutes),
-                                0);
-                        scheduleClient.setAlarmForNotification(calendar);
-                        Log.d(msg, "Alarm " + data.get(position)+ " is set");
-                        Toast.makeText(context, "Notification set for: "+ day +"/"+ (month) +"/"+ year + " " + hours + ":" + minutes, Toast.LENGTH_SHORT).show();
+                        listener.onStateChange(true, position, data);
 
                         } else {
                         data.get(position).setReminder(false);
                         finalHolder.reminderBtn.setImageResource(R.drawable.reminder_false);
+                        listener.onStateChange(false, position, data);
                     }
                 }
             });
@@ -194,4 +171,5 @@ public class EventAdapter extends ArrayAdapter<Event> {
         TextView txtPlace;
         ImageButton reminderBtn;
     }
+
 }

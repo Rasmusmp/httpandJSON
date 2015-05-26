@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.rasmus.httpandjson.Adapter.EventAdapter;
 import com.example.rasmus.httpandjson.model.Event;
 import com.example.rasmus.httpandjson.util.ProgramService;
 import com.google.gson.Gson;

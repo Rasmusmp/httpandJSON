@@ -355,4 +355,7 @@ public class MainActivity extends Activity implements ProgramFragment.Communicat
         super.onDestroy();
         Log.d(msg, "onDestroy()");
     }
+
+
+
 }

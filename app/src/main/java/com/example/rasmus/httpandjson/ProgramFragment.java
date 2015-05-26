@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rasmus.httpandjson.Adapter.EventAdapter;
 import com.example.rasmus.httpandjson.model.Event;
@@ -18,8 +20,11 @@ import com.example.rasmus.httpandjson.util.NotifyService;
 import com.example.rasmus.httpandjson.util.ProgramService;
 import com.example.rasmus.httpandjson.util.ScheduleClient;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.StringTokenizer;
 
 public class ProgramFragment extends Fragment implements EventAdapter.Listener{
@@ -28,6 +33,7 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
     ArrayAdapter<Event> eventAdapter = null;
     ProgramService ProgramService;
     ArrayList<Event> eventList;
+
 
     Communicator communicator;
     ListView programList;
@@ -59,7 +65,6 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
 
         programList = (ListView) view.findViewById(R.id.programList);
 
-
         return view;
     }
 
@@ -82,7 +87,7 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
              Event e = eventAdapter.getItem(position);
              eventList = events;
 
-             Log.d(msg, "Latitude: "+ e.getLatitude());
+             Log.d(msg, "eventE "+ e);
 
              Bundle b = new Bundle();
 
@@ -99,6 +104,7 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
             communicator.respond(b);
             }
         });
+
     }
 
 
@@ -149,6 +155,8 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
     public void setCommunicator(Communicator communicator) { this.communicator = communicator; }
 
 
+
+
     public interface Communicator {
         public void respond(Bundle bundle);
     }
@@ -163,4 +171,7 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
         super.onStop();
 
     }
+
+
+
 }

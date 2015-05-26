@@ -80,17 +80,7 @@ public class DetailActivity extends Activity {
 
         typeTextView = (TextView) findViewById(R.id.typeTextView);
         // Set the place of the event in the place field
-        switch (type){
-            case "ballademad":
-                typeTextView.setText("Ballademad");
-                break;
-            case "gastroscenen":
-                typeTextView.setText("Gastroscenen");
-                break;
-            case "nordiskedraber":
-                typeTextView.setText("Nordiske Dråber");
-                break;
-        }
+
 
 
 
@@ -129,12 +119,31 @@ public class DetailActivity extends Activity {
         LatLng tangkrogen = new LatLng(56.137980, 10.210448 );
 
         BitmapDescriptor image = BitmapDescriptorFactory.fromResource(R.drawable.overlay);
+
+
+
+        switch (type){
+            case "ballademad":
+                typeTextView.setText("Ballademad");
+                image = BitmapDescriptorFactory.fromResource(R.drawable.ballademad_overlay);
+                break;
+            case "gastroscenen":
+                typeTextView.setText("Gastroscenen");
+                image = BitmapDescriptorFactory.fromResource(R.drawable.gastroscenen_overlay);
+                break;
+            case "nordiskedraber":
+                typeTextView.setText("Nordiske Dråber");
+                image = BitmapDescriptorFactory.fromResource(R.drawable.nordiskedraber_overlay);
+
+                break;
+        }
+
         GroundOverlayOptions groundOverlay = new GroundOverlayOptions()
                 .image(image)
                 .position(tangkrogen, 500f)
                 .transparency(0.0f);
-        map.addGroundOverlay(groundOverlay);
 
+        map.addGroundOverlay(groundOverlay);
 
     }
 

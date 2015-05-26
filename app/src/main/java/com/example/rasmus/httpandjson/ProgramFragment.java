@@ -1,5 +1,6 @@
 package com.example.rasmus.httpandjson;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 
 import com.example.rasmus.httpandjson.Adapter.EventAdapter;
 import com.example.rasmus.httpandjson.model.Event;
+import com.example.rasmus.httpandjson.util.NotifyService;
 import com.example.rasmus.httpandjson.util.ProgramService;
 import com.example.rasmus.httpandjson.util.ScheduleClient;
 
@@ -32,6 +34,8 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
 
     // This is a handle so that we can call methods on our notification service
     private ScheduleClient scheduleClient;
+
+    private NotificationManager notificationManager;
 
     public ProgramFragment() {
         // Required empty public constructor
@@ -134,6 +138,8 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
             Log.d(msg, "StateChanged - if true: " + state + ", " + position);
         }else{
             // Cancel notification
+            notificationManager.cancel(5);
+
             Log.d(msg, "StateChanged - if false: " + state + ", " + position);
         }
 

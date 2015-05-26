@@ -31,7 +31,7 @@ public class ProgramService extends Service {
     String msg = "Rasmus Logging: ";
     //String JSONData;
     //JSONObject reader;
-    String JSONstring = "http://nhaulrik.dk/food_festival.json";
+    String JSONstring = "https://dl.dropboxusercontent.com/u/42653489/food_festival.json";
     public static final String RESULT_RETURNED_FROM_SERVICE = "Result_Returned_From_Service";
     public static final String ERROR_CALL_SERVICE = "Error_Call_Service";
 

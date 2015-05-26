@@ -63,6 +63,8 @@ public class DetailActivity extends Activity {
         //titleTextView.setTypeface(robotoBoldCondensedItalic);
         titleTextView.setText(name.toUpperCase());
 
+        descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
+        descriptionTextView.setText(description);
 
         timeTextView = (TextView) findViewById(R.id.timeTextView);
         timeTextView.setText("Kl: " + time);
@@ -83,10 +85,10 @@ public class DetailActivity extends Activity {
 
 
         // Find the id of the image matching the type of event
-        int resId = DetailActivity.this.getResources().getIdentifier(type, "drawable", DetailActivity.this.getPackageName());
+        int resId = DetailActivity.this.getResources().getIdentifier(type+"_banner", "drawable", DetailActivity.this.getPackageName());
         // Set the image with the id found in the line above
 
-        //Log.d("Nikolaj: ", ""+ resId);
+        Log.d("Nikolaj: ", ""+ resId);
 
         eventImg.setImageResource(resId);
 

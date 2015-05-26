@@ -5,11 +5,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.rasmus.httpandjson.MainActivity;
+import com.example.rasmus.httpandjson.ProgramFragment;
 import com.example.rasmus.httpandjson.R;
 
 /**
@@ -23,23 +27,31 @@ import com.example.rasmus.httpandjson.R;
  * @author paul.blundell: http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
  *
  */
-public class NotifyService extends Service {
+public class NotifyService extends Service implements ProgramFragment.Communicator {
     String msg = "Rasmus Logging";
 
+    /**
+     * Class for clients to access
+     */
     public class ServiceBinder extends Binder {
         NotifyService getService(){
             return NotifyService.this;
         }
     }
 
-    // Unique id to identify the notification.
-    private static final int NOTIFICATION = 5;
+       // Unique id to identify the notification.
+    private static int NOTIFICATION = 0;
 
     // Name of an intent extra we can use to identify if this service was started to create a notification
     public static final String INTENT_NOTIFY = "com.example.rasmus.httpandjson.util.INTENT_NOTIFY";
 
     // The system notification manager
     private NotificationManager mNM;
+
+    @Override
+    public void respond(Bundle bundle) {
+        NOTIFICATION = Integer.parseInt(bundle.getString("id"));
+    }
 
     @Override
     public void onCreate() {
@@ -51,9 +63,10 @@ public class NotifyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(msg, "NotifyService - Received start id " + startId + ": " + intent);
 
-        // If this service was started by out AlarmTask intent then we want to show our notification
+        // If this service was started by our AlarmTask intent then we want to show our notification
         if (intent.getBooleanExtra(INTENT_NOTIFY, false)){
             showNotification();
+
         }
         // We don't care if this service is stopped as we have already delivered our notification
         return START_NOT_STICKY;
@@ -96,6 +109,14 @@ public class NotifyService extends Service {
 
         // Send the notification to the system.
         mNM.notify(NOTIFICATION, notification);
+        NOTIFICATION ++;
+
+        // Store det NOTIFICATION id for later reference
+        SharedPreferences notificationId = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences.Editor prefsEditor = notificationId.edit();
+        prefsEditor.putInt("notificationId",NOTIFICATION);
+        prefsEditor.apply();
 
         // Stop the service when we are finished
         stopSelf();

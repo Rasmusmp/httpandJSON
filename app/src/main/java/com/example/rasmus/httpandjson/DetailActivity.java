@@ -89,6 +89,7 @@ public class DetailActivity extends Activity {
         // Set the image with the id found in the line above
 
        // Log.d("Nikolaj: ", ""+ resId);
+       //
 
         eventImg.setImageResource(resId);
 

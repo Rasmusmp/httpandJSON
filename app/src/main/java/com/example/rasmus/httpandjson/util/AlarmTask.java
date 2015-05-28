@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -13,7 +14,7 @@ import java.util.Calendar;
  * http://blog.blundell-apps.com/notification-for-a-user-chosen-time/
  */
 public class AlarmTask implements Runnable{
-    String msg = "Rasmus Logging";
+    String msg = "Frederik Logging";
 
     // The date selected for the alarm
     private final Calendar date;
@@ -43,6 +44,9 @@ public class AlarmTask implements Runnable{
 
         // Sets an alarm - note this alarm will be lost if the phone is turned off and on again.
         // Quickly thinking, the way round this would be to have your app be notified of the phone starting up and re-starting your alarms.
-        am.set(AlarmManager.RTC_WAKEUP, (date.getTimeInMillis() - (ONE_MIN_AS_MILLISEC*15)), pendingIntent);
+        SharedPreferences prefsEditor = context.getSharedPreferences("Time", context.MODE_PRIVATE);
+        int timeInMin = prefsEditor.getInt(info, 0);
+        Log.d(msg, "Time received: " + timeInMin);
+        am.set(AlarmManager.RTC_WAKEUP, (date.getTimeInMillis() - (ONE_MIN_AS_MILLISEC*timeInMin)), pendingIntent);
     }
 }

@@ -94,7 +94,11 @@ public class NotifyService extends Service implements ProgramFragment.Communicat
         int icon = R.drawable.time;
 
         // This is the scrolling text of the notification
-        CharSequence text = "" + name + " starts in 15 min";
+
+        SharedPreferences prefsReader = getSharedPreferences("Time", MODE_PRIVATE);
+        int timeInMin = prefsReader.getInt(name, 0);
+
+        CharSequence text = "" + name + " starts in " + timeInMin + " min";
 
         // What time to show on the notification
         long time = System.currentTimeMillis();

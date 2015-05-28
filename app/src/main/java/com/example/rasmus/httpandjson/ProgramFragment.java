@@ -9,11 +9,16 @@ import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +35,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.StringTokenizer;
 
-public class ProgramFragment extends Fragment implements EventAdapter.Listener{
+public class ProgramFragment extends Fragment implements EventAdapter.Listener {
     String msg = "Rasmus Logging";
 
     ArrayAdapter<Event> eventAdapter = null;
@@ -45,7 +50,6 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
     private ScheduleClient scheduleClient;
 
     private NotificationManager notificationManager;
-
     public ProgramFragment() {
         // Required empty public constructor
     }
@@ -53,10 +57,13 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Create the Popup Menu for selection of alarm time
 
+        //timeselecter.inflate();
         // Create a new service client and bind our activity to this service
         scheduleClient = new ScheduleClient(this.getActivity());
         scheduleClient.doBindService();
+
 
     }
 
@@ -145,12 +152,41 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
         String info = events.get(position).getName();
 
         if (state){
-            // Create notification
-            scheduleClient.setAlarmForNotification(calendar, info);
+            // Create notification - is the overall goal of this state. There's a few steps involved though, as we would like to set the time.
+            // Make popup menu (and make it appear at the right position, of course)
+
+            PopupMenu timeselecter = new PopupMenu(getActivity(), programList.getChildAt(position).findViewById(R.id.reminderBtn));
+            // Populate our menu
+            // TODO: should go to XML file!
+            timeselecter.getMenu().add(Menu.NONE, 5, Menu.NONE, "5 min in advance");
+            timeselecter.getMenu().add(Menu.NONE, 10, Menu.NONE, "10 min in advance");
+            timeselecter.getMenu().add(Menu.NONE, 15, Menu.NONE, "15 min in advance");
+            timeselecter.getMenu().add(Menu.NONE, 20, Menu.NONE, "20 min in advance");
+            timeselecter.getMenu().add(Menu.NONE, 25, Menu.NONE, "25 min in advance");
+            timeselecter.getMenu().add(Menu.NONE, 30, Menu.NONE, "30 min in advance");
+            // We set a listener for the menu items.
+            //First we get the latest calendar and info
+            final String i = info;
+            final Calendar c = calendar;
+
+            timeselecter.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    SharedPreferences.Editor prefsEditor = getActivity().getSharedPreferences("Time", getActivity().MODE_PRIVATE).edit();
+                    prefsEditor.putInt(i , menuItem.getItemId()); // Because the ID corresponds to the time in seconds
+                    prefsEditor.apply();
+                    scheduleClient.setAlarmForNotification(c, i);
+                    return true;
+                }
+
+            });
+            // Finally, we show our freshly created menu.
+
+            timeselecter.show();
+            //scheduleClient.setAlarmForNotification(calendar, info);
             Log.d(msg, "StateChanged - if true: " + state + ", " + position);
         }else{
             // Cancel notification
-
 
             SharedPreferences prefsEditor = getActivity().getSharedPreferences("Events", getActivity().MODE_PRIVATE);
             int toCancel = prefsEditor.getInt(info, -1);
@@ -165,7 +201,11 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener{
 
     }
 
-
+    public boolean onMenuItemClick(MenuItem item) {
+        if (true)
+      return true;
+        else return false;
+    }
     public void setCommunicator(Communicator communicator) { this.communicator = communicator; }
 
 

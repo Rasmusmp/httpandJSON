@@ -157,7 +157,6 @@ public class ProgramFragment extends Fragment implements EventAdapter.Listener {
 
             PopupMenu timeselecter = new PopupMenu(getActivity(), programList.getChildAt(position).findViewById(R.id.reminderBtn));
             // Populate our menu
-            // TODO: should go to XML file!
             timeselecter.getMenu().add(Menu.NONE, 5, Menu.NONE, "5 min in advance");
             timeselecter.getMenu().add(Menu.NONE, 10, Menu.NONE, "10 min in advance");
             timeselecter.getMenu().add(Menu.NONE, 15, Menu.NONE, "15 min in advance");

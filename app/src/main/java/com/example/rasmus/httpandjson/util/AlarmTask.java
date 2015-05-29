@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -48,5 +49,6 @@ public class AlarmTask implements Runnable{
         int timeInMin = prefsEditor.getInt(info, 0);
         Log.d(msg, "Time received: " + timeInMin);
         am.set(AlarmManager.RTC_WAKEUP, (date.getTimeInMillis() - (ONE_MIN_AS_MILLISEC*timeInMin)), pendingIntent);
+        Toast.makeText(context, "Alarm set for " + info + ", " + timeInMin + " Minutes before event start", Toast.LENGTH_SHORT).show();
     }
 }
